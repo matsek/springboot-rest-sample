@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import se.callista.springboot.rest.api.v1.Hospital;
 import se.callista.springboot.rest.domain.HospitalJPA;
 import se.callista.springboot.rest.domain.HospitalRepository;
 
@@ -29,6 +30,9 @@ public class HospitalServiceTest {
     @Autowired
     HospitalRepository hospitalRepository;
 
+    @Autowired
+    HospitalMapper hospitalMapper;
+
     private static String NAME_ONE = "SU";
     private static String NAME_TWO = "SÄS";
     private static String ADDRESS_ONE = "Gbg";
@@ -42,7 +46,7 @@ public class HospitalServiceTest {
     public void insertOne_findAll() {
         HospitalJPA initHospital = insertOneHospital();
 
-        List<HospitalJPA> readHospitals = hospitalService.findAll();
+        List<Hospital> readHospitals = hospitalService.findAll();
 
         assertEquals(1, readHospitals.size());
         assertEquals(NAME_ONE, readHospitals.get(0).getName());
@@ -52,7 +56,7 @@ public class HospitalServiceTest {
     public void insertOne_findOne() {
         HospitalJPA initHospital = insertOneHospital();
 
-        HospitalJPA readHospital = hospitalService.findOne(initHospital.getId());
+        Hospital readHospital = hospitalService.findOne(initHospital.getId());
 
         assertEquals(NAME_ONE, readHospital.getName());
     }
@@ -64,7 +68,7 @@ public class HospitalServiceTest {
 
         hospitalService.delete(initHospital.getId());
 
-        HospitalJPA readHospital = hospitalService.findOne(initHospital.getId());
+        Hospital readHospital = hospitalService.findOne(initHospital.getId());
         assertEquals(null, readHospital);
      }
 
@@ -72,10 +76,13 @@ public class HospitalServiceTest {
     public void insertOne_updateIt() {
         HospitalJPA initHospital = insertOneHospital();
 
-        initHospital.setName(NAME_TWO);
-        hospitalService.update(initHospital);
+        // Create updated hospital object
+        Hospital hospitalToUpdate = hospitalMapper.toDTO(initHospital);
 
-        HospitalJPA readHospital = hospitalService.findOne(initHospital.getId());
+        hospitalToUpdate.setName(NAME_TWO);
+        hospitalService.update(hospitalToUpdate);
+
+        Hospital readHospital = hospitalService.findOne(initHospital.getId());
 
         assertEquals(NAME_TWO, readHospital.getName());
     }
