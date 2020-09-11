@@ -75,4 +75,4 @@ We have set a property to make the call to make the UI look like swagger.
 ### Simple Tests ###
 We have also added some simple tests for the Hospital controller and service.
 
-1. Test to run the testsuite
+1. Test to run the testsuites in the project

@@ -15,6 +15,7 @@ import se.callista.springboot.rest.domain.HospitalJPA;
 import se.callista.springboot.rest.domain.HospitalRepository;
 
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ExtendWith(SpringExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
+@Transactional
 public class HospitalServiceTest {
 
     @Autowired
@@ -75,12 +77,9 @@ public class HospitalServiceTest {
     @Test
     public void insertOne_updateIt() {
         HospitalJPA initHospital = insertOneHospital();
+        initHospital.setName(NAME_TWO);
 
-        // Create updated hospital object
-        Hospital hospitalToUpdate = hospitalMapper.toDTO(initHospital);
-
-        hospitalToUpdate.setName(NAME_TWO);
-        hospitalService.update(hospitalToUpdate);
+        hospitalService.update(hospitalMapper.toDTO(initHospital));
 
         Hospital readHospital = hospitalService.findOne(initHospital.getId());
 
@@ -93,6 +92,7 @@ public class HospitalServiceTest {
      */
     private HospitalJPA insertOneHospital() {
         HospitalJPA hospital = new HospitalJPA(NAME_ONE, ADDRESS_ONE);
+        hospital.setCareunits(null);
         return hospitalRepository.save(hospital);
     }
 
